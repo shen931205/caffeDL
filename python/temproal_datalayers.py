@@ -26,17 +26,17 @@ class TemproalDataLayerSync(caffe.Layer):
     UCF-101 and Hmdb-51 dataset.
     '''
     def setup(self, bottom, top):
-	
+
 		self.top_names = ['data', 'label']
 		# === Read input parameters ===
-	
+
 		params = eval(self.param_str)
 
 		#Check the parameters for validity.
 		check_params(params)
-	
+
 		self.batch_size = params['batch_size']
-		self.channels = params['channels']	
+		self.channels = params['channels']
 		self.height = params['im_shape'][0]
 		self.width = params['im_shape'][1]
 
@@ -48,15 +48,20 @@ class TemproalDataLayerSync(caffe.Layer):
 			top[1].reshape(self.batch_size, 101)
 
 		print_info("TemproalDataLayerSync", params)
-    
+
 	def forward(self, bottom, top):
 		'''
 		Load data.
 		'''
 		for itt in range(self.batch_size):
-			im, label = self.batch_loader.load_next_image()
 
-			top[0].data[itt, ...] = im
+            #im, label = self.batch_loader.load_next_image()
+
+            for i in range(self.channels):
+                im = self.loader.load_next_image()
+            lebel = loader.load_label()
+
+            top[0].data[itt, ...] = im
 			top[1].data[itt, ...] = label
 
     def backward(self, bottom, top):
@@ -73,7 +78,7 @@ class BatchLoader(object):
     Images can either be loaded singly, or in a batch(This is the useful part in temproal cnn on optical flow.)
     '''
 	def __init__(self, params, result):
-		self.result = result 
+		self.result = result
 		self.batch_size = params['batch_size']
 		self.im_shape = params['im_shape']
 
@@ -82,7 +87,7 @@ class BatchLoader(object):
 		'''
 		Load the next image in a batch.
 		'''
-		
+
 		if self._cur == len(self.indexlist):
 			self._cur =0
 			suffle(self.indexlist)
