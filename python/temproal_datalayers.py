@@ -45,7 +45,7 @@ class TemproalDataLayerSync(caffe.Layer):
 		top[0].reshape(
 	    	self.batch_size, self.channels, self.height, sefl.width)
 			# Note the channels (UCF-101 has 101 classes)
-			top[1].reshape(self.batch_size, 101)
+		top[1].reshape(self.batch_size, 101)
 
 		print_info("TemproalDataLayerSync", params)
 
@@ -58,8 +58,8 @@ class TemproalDataLayerSync(caffe.Layer):
             #im, label = self.batch_loader.load_next_image()
 
             for i in range(self.channels):
-                im = self.loader.load_next_image()
-            lebel = loader.load_label()
+                im = self.batch_sizeloader.load_next_image()
+            lebel = self.batch_loader.load_label()
 
             top[0].data[itt, ...] = im
 			top[1].data[itt, ...] = label
@@ -90,14 +90,34 @@ class BatchLoader(object):
 
 		if self._cur == len(self.indexlist):
 			self._cur =0
-			suffle(self.indexlist)
 
 		index = self.indexlist(self._cur)
 
 		#Choose the image type {e.g., .png, .jpg, .JPEG}.
 		im_file_name = index + '.JPEG'
 		im = np.asarry(Image)
+    
+    def load_label(self):
+        labels = np.zeros(101).astype(np.float32)
+        anns = load_ucf101_annotation(indexm ucf101_root)
+        for label in anns['get_classes']:
+            labels[label - 1] =1
+        self._cur += 10
+        return self.transformer.preprocess(im), labels
 
+def load_ucf101_annotation(index, ucf101_root):
+    '''
+    This code is borrowed from Ross Girshick's FAST-RCNN code,
+    I fixed for my own requirement.
+    See publication for further details: (http://arxiv.org/abs/1504.08083).
+
+    Thank Ross!
+    '''
+    classes = ('__background__', #always index 0
+                '')
+    class_to_ind = dict(zip(classes, xrange(102)))
+    filename = osp.join(ucf101_root, 'Annotation', index, '.xml')
+    print 'Loading: {}'.format(filename)
 
 def check_params(params):
 	'''
