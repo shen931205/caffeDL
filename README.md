@@ -1,7 +1,7 @@
 #caffeDL
 
 
-########python########
+####python####
 
 classify-folder.py:
 	Classify the CNN feature to predict the result of classes.
