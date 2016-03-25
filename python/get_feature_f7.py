@@ -5,17 +5,21 @@ import sys
 import os
 import lmdb
 import gc
-
+sys.path.append('/home/u514/caffe-i/caffe-master/caffe/python')
 import caffe
 
 #dir
-image_dir = '/home/u514/Zhang/AVA/originImageSet/'
-feature_dir = '/home/u514/Zhang/AVA/feature/originImageSet/'
-featureStr_dir = '/home/u514/Zhang/AVA/featureStr/originImageSet/'
-classify_path = '/home/u514/Zhang/AVA/classify/originImageSet/'
-classify_dir = '/home/u514/Zhang/AVA/classify/originImageSet/classify_output.txt'
-outputfile = '/home/u514/Zhang/AVA/feature/originImageSet/output'
-
+image_dir = '/home/u514/Lee/CUHKPhotoQualityDatabase/TEST/Good/'
+#feature_dir = '/home/u514/Lee/CUHK/TEST/feature/Bad/5/'
+feature_dir = '/home/u514/Lee/CUHK/TEST/feature/Good/originImageSet/'
+#featureStr_dir = '/home/u514/Lee/CUHK/TEST/featureStr/Bad/5/'
+featureStr_dir = '/home/u514/Lee/CUHK/TEST/featureStr/Good/originImageSet/'
+#classify_path = '/home/u514/Lee/CUHK/TEST/classify/Bad/5/'
+classify_path = '/home/u514/Lee/CUHK/TEST/classify/Good/originImageSet/'
+#classify_dir = '/home/u514/Lee/CUHK/TEST/classify/Bad/5/classify_output.txt'
+classify_dir = '/home/u514/Lee/CUHK/TEST/classify/Good/originImageSet/classify_output.txt'
+#outputfile = '/home/u514/Lee/CUHK/TEST/feature/Bad/5/output'
+outputfile = '/home/u514/Lee/CUHK/TEST/feature/Good/originImageSet/output'
 
 if not os.path.isdir(feature_dir):
     os.system('sudo mkdir -p ' + feature_dir)
@@ -71,19 +75,19 @@ for f in files:
      	    out = net.forward()
 	    fc7Data = net.blobs['fc7'].data
 	    probData = net.blobs['prob'].data
-	    predict = np.argmax(probData, axis = 1).reshape(50, -1)
+            predict = np.argmax(probData, axis = 1).reshape(50, -1)
 
 	    for k in range(0, 50):
 		classnum = predict[k][0]
 		if len(allfeatures) == 0:
-		    allfeatures = fc7Data[k].reshape(1, -1)
+                    allfeatures = fc7Data[k].reshape(1, -1)
 		else:
-		    feature = fc7Data[k].reshape(1, -1)
+                    feature = fc7Data[k].reshape(1, -1)
 		    allfeatures = np.vstack((allfeatures, feature)) 
 		#print allfeatures
 		#print np.shape(feature)[0], np.shape(feature)[1]
 		#featureFile.write(str(feature) + '\n')
-		
+			
 		#tempData = feature.tobytes()
 		#print fileNameNum[k][0]
 		fileHandle.write(str(fileNameNum[k])+ '   ' + str(classnum) + '\n')
@@ -92,8 +96,8 @@ for f in files:
 	fileNameNum.append(f.split('.')[0]) 
         net.blobs['data'].data[i,:,:,:] = transformer.preprocess('data', caffe.io.load_image(image_dir + f))  
         i = i + 1
-    count = count + 1
-    if ((count - 1) % 2000 == 0 and (count -1) > 0):
+        count = count + 1
+    if ((count - 1) % 3000 == 0 and (count -1) != 0):
 	np.save(outputfile + str(count - 1), allfeatures)
 	print 'save as ', outputfile + str(count - 1)
 	allfeatures = []
@@ -115,8 +119,7 @@ for k in range(0, i):
     #featureFile.write(str(feature) + '\n')
     fileHandle.write(str(fileNameNum[k][0])+ '   ' + str(classnum) + '\n')
     #np.save(outputfile, allfeatures)
-
-print np.shape(allfeatures)[0], np.shape(allfeatures)[1]
+#print allfeatures
 np.save(outputfile + str(count), allfeatures)
 #featureFile.close()  
 fileHandle.close()
