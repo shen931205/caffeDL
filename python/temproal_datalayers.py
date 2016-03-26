@@ -9,7 +9,7 @@ import time
 import pickle
 import scipy.misc
 import skimage.io
-
+from random import shuffle
 sys.path.append('./caffe/python')
 
 import caffe
@@ -62,8 +62,7 @@ class TemproalDataLayerSync(caffe.Layer):
 
             #im, label = self.batch_loader.load_next_image()
 
-            for i in range(self.channels):
-                im = self.batch_sizeloader.load_next_image()
+            im = self.batch_sizeloader.load_next_image()
             lebel = self.batch_loader.load_label()
 
             top[0].data[itt, ...] = im
@@ -125,7 +124,7 @@ def load_ucf101_annotation(index, ucf101_root):
 	with open(filename) as f:
 		data = f.read()
 
-##Get the dict of classes.
+## Get the dict of classes.
 
 def load_classes_ind(class_num):
 	input_path = '/home/u514/caffe-i/spatial_train/ucf-101-train'
@@ -138,7 +137,7 @@ def load_classes_ind(class_num):
 		classes_ind = dict(zip(classes_ind, xrange(int(class_num) + 1)))
 	return classes_ind
 
-##Check out the integrality of parameters. 
+## Check out the integrality of parameters. 
 
 def check_params(params):
 	'''
