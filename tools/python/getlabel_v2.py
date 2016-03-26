@@ -27,12 +27,11 @@ def main(argv):
 def get_multilabel(input_path):
 	input_path = os.path.expanduser(input_path)
 	video_classes = get_classes_ind(input_path) 
-	print video_classes
 	for i in video_classes:
 		if i != '__background__':
 			sub_video_classes_path = os.path.join(input_path, i)
 			sub_video_classes = get_classes_ind(sub_video_classes_path)
-			print '------------------------------------------ '
+			print '--------------------{}---------------------- '.format(i)
 			for j in sub_video_classes:
 				if j != '__background__':
 					optf_path = os.path.join(sub_video_classes_path, j)
