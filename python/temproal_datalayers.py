@@ -1,5 +1,10 @@
+'''
+@author: Dean
+
+2016-3-20
+
+'''
 import sys
-import json
 import time
 import pickle
 import scipy.misc
@@ -10,15 +15,15 @@ sys.path.append('./caffe/python')
 import caffe
 
 import numpy as np
+import os
 import os.path as osp
 
 from xml.dom import minidom
-from random import shuffle
 from threading import Thread
 from PIL import Image
 
 from tools import SimpleTransformer
-
+sys.path.append('../tools/python/tool.py')
 
 class TemproalDataLayerSync(caffe.Layer):
     '''
@@ -113,11 +118,27 @@ def load_ucf101_annotation(index, ucf101_root):
 
     Thank Ross!
     '''
-    classes = ('__background__', #always index 0
-                '')
-    class_to_ind = dict(zip(classes, xrange(102)))
-    filename = osp.join(ucf101_root, 'Annotation', index, '.xml')
+    class_to_ind = load_classes_ind(102) 
+    #filename = osp.join(ucf101_root, 'Annotation', index, '.xml')
     print 'Loading: {}'.format(filename)
+
+	with open(filename) as f:
+		data = f.read()
+
+##Get the dict of classes.
+
+def load_classes_ind(class_num):
+	input_path = '/home/u514/caffe-i/spatial_train/ucf-101-train'
+	input_path = osp.expanduser(input_path)
+	classes_ind = []
+	if osp.exists(input_path):
+		classes_ind = os.listdir(input_path)
+		classes_ind = sorted(classes_ind)
+		classes_ind.insert(0, '__background__')
+		classes_ind = dict(zip(classes_ind, xrange(int(class_num) + 1)))
+	return classes_ind
+
+##Check out the integrality of parameters. 
 
 def check_params(params):
 	'''
@@ -131,6 +152,7 @@ def check_params(params):
 	for r in required:
 		assert r in params.keys(), 'Params must include {}'.format(r)
 
+## Print the infomation of parameters.
 
 def print_info(name, params):
 	'''
@@ -141,13 +163,4 @@ def print_info(name, params):
 		params['split'].
 		params['batch_size'],
 		params['im_shape'])
-
-
-
-
-
-
-
-
-
 
