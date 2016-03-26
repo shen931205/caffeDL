@@ -27,7 +27,7 @@ def main(argv):
 
 ##Get the classes in input path.
 
-def get_classes_ind(input_path, output_file):
+def get_classes_ind(input_path):
 	input_path = os.path.expanduser(input_path)
 	classes_ind = []
 	if os.path.exists(input_path):
@@ -35,10 +35,8 @@ def get_classes_ind(input_path, output_file):
 		classes_ind = sorted(classes_ind)
 		classes_ind.insert(0, '__background__')
 		classes_ind = dict(zip(classes_ind, xrange(102)))
-		for i in classes_ind:
-			print i, classes_ind[i]
-	print 'get_class_ind done.'
-
+	#print 'get_class_ind done.'
+	return classes_ind
 
 if __name__ == '__main__':
 	_input, _output = main(sys.argv)
