@@ -9,17 +9,17 @@ sys.path.append('/home/u514/caffe-i/caffe-master/caffe/python')
 import caffe
 
 #dir
-image_dir = '/home/u514/Lee/CUHKPhotoQualityDatabase/TEST/Good/'
+image_dir = '/home/u514/Zhang/oIS/originImageSet/'
 #feature_dir = '/home/u514/Lee/CUHK/TEST/feature/Bad/5/'
-feature_dir = '/home/u514/Lee/CUHK/TEST/feature/Good/originImageSet/'
+feature_dir = '/home/u514/Zhang/oIS/feature/'
 #featureStr_dir = '/home/u514/Lee/CUHK/TEST/featureStr/Bad/5/'
-featureStr_dir = '/home/u514/Lee/CUHK/TEST/featureStr/Good/originImageSet/'
+featureStr_dir = '/home/u514/Zhang/oIS/featureStr/'
 #classify_path = '/home/u514/Lee/CUHK/TEST/classify/Bad/5/'
-classify_path = '/home/u514/Lee/CUHK/TEST/classify/Good/originImageSet/'
+classify_path = '/home/u514/Zhang/oIS/classify/'
 #classify_dir = '/home/u514/Lee/CUHK/TEST/classify/Bad/5/classify_output.txt'
-classify_dir = '/home/u514/Lee/CUHK/TEST/classify/Good/originImageSet/classify_output.txt'
+classify_dir = os.path.join(classify_path, 'classify_output.txt')
 #outputfile = '/home/u514/Lee/CUHK/TEST/feature/Bad/5/output'
-outputfile = '/home/u514/Lee/CUHK/TEST/feature/Good/originImageSet/output'
+outputfile = os.path.join(feature_dir,'output')
 
 if not os.path.isdir(feature_dir):
     os.system('sudo mkdir -p ' + feature_dir)
@@ -97,7 +97,7 @@ for f in files:
         net.blobs['data'].data[i,:,:,:] = transformer.preprocess('data', caffe.io.load_image(image_dir + f))  
         i = i + 1
         count = count + 1
-    if ((count - 1) % 3000 == 0 and (count -1) != 0):
+    if ((count - 1) % 2000 == 0 and (count -1) != 0):
 	np.save(outputfile + str(count - 1), allfeatures)
 	print 'save as ', outputfile + str(count - 1)
 	allfeatures = []
@@ -117,7 +117,7 @@ for k in range(0, i):
 	feature = fc7Data[k].reshape(1, -1)
 	allfeatures = np.vstack((allfeatures, feature))
     #featureFile.write(str(feature) + '\n')
-    fileHandle.write(str(fileNameNum[k][0])+ '   ' + str(classnum) + '\n')
+    fileHandle.write(str(fileNameNum[k])+ '   ' + str(classnum) + '\n')
     #np.save(outputfile, allfeatures)
 #print allfeatures
 np.save(outputfile + str(count), allfeatures)
