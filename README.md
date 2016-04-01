@@ -28,3 +28,8 @@ savetxt_from_npy.py:
 getlabel.py getlabel_v2.py:
 	A simple tools used to get labels of dataset(e.g., UCF-101).
 
+getAVALabel.py
+	Split the image set to Train, Test and Validation set.Save as HDF5 data type.
+
+imagecroper.py
+	Crop the images to the cop-dim.
