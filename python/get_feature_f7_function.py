@@ -47,11 +47,12 @@ def extract_features_from_CNN(image_path_root, save_path_root, layername):
     allfeatures = []
     filename = []
 
+    gpu_id = 3 # [0, 1, 2, 3] -> k40's ID
     batch_size = 50
     raw_image_size = 256
     crop_size = 224
 
-    net, transformer = init_caffe_net(3, raw_image_size, crop_size, batch_size)
+    net, transformer = init_caffe_net(gpu_id, raw_image_size, crop_size, batch_size)
     fileHandle = open(classify_output, 'a')
 
     for f in files:
@@ -120,7 +121,7 @@ def init_caffe_net(gpu_id, raw_image_size, crop_size, batch_size):
     model_def = '/home/u514/caffe-i/caffe-master/caffe/models/vgg/vgg_2048/deploy-bak.prototxt'
     # The pre-trained model.
     caffemodel = '/home/u514/caffe-i/caffe-master/caffe/models/vgg/vgg_2048/pretrain_ilsvrc2012_vgg_2048.caffemodel'
-    # The mean file of the image set used to trained the model.
+    # The mean file of the image set used to train the model.
     mean_file = '/home/u514/caffe-i/caffe-master/caffe/models/vff/vgg_2048/vgg_mean.npy'
     net = caffe.Net(model_def, caffemodel, caffe.TEST)
 
