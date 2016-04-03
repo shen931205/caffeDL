@@ -119,7 +119,9 @@ def extract_features_from_CNN(image_path_root, save_path_root, layername):
     print '--------------- Extract features Done. ---------------'
 def init_caffe_net(gpu_id, raw_image_size, crop_size, batch_size):
     '''
-     Initialize caffe configuration
+     Initialize caffe configuration.
+     The function is used to extract the RGB images.
+     If your dataset contains gray images, set the channels 3 to 1 and comment the image preprocessing in transposing and channels changing.
     '''
     caffe.set_mode_gpu()
     caffe.set_device(int(gpu_id)) # {0, 1, 2, 3} to four GPUs you want to choose.
