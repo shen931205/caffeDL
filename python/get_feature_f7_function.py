@@ -77,18 +77,24 @@ def extract_features_from_CNN(image_path_root, save_path_root, layername):
                     fileHandle.write(str(filename[k]) + ' ' + str(classnum) + '\n')
                 print np.shape(allfeatures)
                 print '--------------- Have extracted ', j * batch_size, ' images. ---------------'
-
-            filename.append(os.path.splitext(f)[0])
+            if len(filename) == 0:
+                filename = os.path.splitext(f)[0]
+            else:
+                filename.append(os.path.splitext(f)[0])
             # Load images.
             net.blobs['data'].data[i, ...] = transformer.preprocess(
                     'data', caffe.io.load_image(
                         os.path.join(image_path_root, f)))
             i += 1
             count += 1
+
+        # Set save batch (Default: 2000).
+        # It is recommended to set 2000 as a split *.npy, if the batch is bigger, the speed of vstack will be slower.
         if (count - 1) % 2000 == 0 and (count - 1) != 0:
             np.save(outputfile + str(count - 1), allfeatures)
             print '-----# Save as ', outputfile + str(count - 1), ' in ', feature_dir
             allfeatures = []
+            filename = []
 
     # Deal with the rest of images not in batch.
     print '--------------- Have extracted the rest ', i, ' images. ---------------'
