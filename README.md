@@ -35,8 +35,4 @@ getAVALabel.py:
 	Split the image set to Train, Test and Validation set.Save as HDF5 data type.
 
 imagecroper.py:
-<<<<<<< HEAD
 	Crop the images to the crop-dim.
-=======
-	Crop the images to the crop-dim.
->>>>>>> b5c6fb3128fd23b5ecdbba184cd9fa200b662869
