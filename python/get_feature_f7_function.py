@@ -48,7 +48,7 @@ def extract_features_from_CNN(image_path_root, save_path_root, layername):
     filename = []
 
     gpu_id = 3 # [0, 1, 2, 3] -> k40's ID
-    batch_size = 50
+    batch_size = 3 
     raw_image_size = 256
     crop_size = 224
 
@@ -64,7 +64,7 @@ def extract_features_from_CNN(image_path_root, save_path_root, layername):
                 featureData = net.blobs[layername].data
                 probData = net.blobs['prob'].data
                 # Predict the top-1 class.
-                predict = np.argmax(probData, axisd = 1).reshape(batch_size, -1)
+                predict = np.argmax(probData, axis = 1).reshape(batch_size, -1)
 
                 for k in range(0, batch_size):
                     classnum = predict[k][0]
@@ -74,13 +74,10 @@ def extract_features_from_CNN(image_path_root, save_path_root, layername):
                         tempfeature = featureData[k].reshape(1, -1)
                         allfeatures = np.vstack((allfeatures, tempfeature))
                     #- tag -#
-                    fileHandle.write(str(filename[k]) + ' ' + str(classnum) + '\n')
+		    fileHandle.write(str(filename[k + batch_size * (j - 1)]) + ' ' + str(classnum) + '\n')
                 print np.shape(allfeatures)
                 print '--------------- Have extracted ', j * batch_size, ' images. ---------------'
-            if len(filename) == 0:
-                filename = os.path.splitext(f)[0]
-            else:
-                filename.append(os.path.splitext(f)[0])
+	    filename.append(os.path.splitext(f)[0])
             # Load images.
             net.blobs['data'].data[i, ...] = transformer.preprocess(
                     'data', caffe.io.load_image(
@@ -94,7 +91,6 @@ def extract_features_from_CNN(image_path_root, save_path_root, layername):
             np.save(outputfile + str(count - 1), allfeatures)
             print '-----# Save as ', outputfile + str(count - 1), ' in ', feature_dir
             allfeatures = []
-            filename = []
 
     # Deal with the rest of images not in batch.
     print '--------------- Have extracted the rest ', i, ' images. ---------------'
@@ -112,7 +108,7 @@ def extract_features_from_CNN(image_path_root, save_path_root, layername):
             tempfeature = featureData[k].reshape(1, -1)
             allfeatures = np.vstack((allfeatures, tempfeature))
         #-- tag --#
-        fileHandle.write(str(filename[k]) + ' ' + str(classnum) + '\n')
+        fileHandle.write(str(filename[k + batch_size * j]) + ' ' + str(classnum) + '\n')
     np.save(outputfile + str(count), allfeatures)
 
     fileHandle.close()
@@ -130,7 +126,7 @@ def init_caffe_net(gpu_id, raw_image_size, crop_size, batch_size):
     # The pre-trained model.
     caffemodel = '/home/u514/caffe-i/caffe-master/caffe/models/vgg/vgg_2048/pretrain_ilsvrc2012_vgg_2048.caffemodel'
     # The mean file of the image set used to train the model.
-    mean_file = '/home/u514/caffe-i/caffe-master/caffe/models/vff/vgg_2048/vgg_mean.npy'
+    mean_file = '/home/u514/caffe-i/caffe-master/caffe/models/vgg/vgg_2048/vgg_mean.npy'
     net = caffe.Net(model_def, caffemodel, caffe.TEST)
 
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
