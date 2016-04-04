@@ -30,4 +30,7 @@ def translate(_in, _out):
             output_name = filename + '.txt'
             print_txt(os.path.join(_in, f), os.path.join(_out, output_name))
 
-
+if __name__ == '__main__':
+	in_ = '/home/u514/DTask/1/feature'
+	out = '/home/u514/DTask/1/featureStr'
+	_init_(in_, out)
